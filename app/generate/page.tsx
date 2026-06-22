@@ -65,7 +65,27 @@ type GenerateContentBody = {
   platform?: "linkedin" | "facebook" | "instagram" | "x";
   tone?: string;
 };
+async function generateContent() {
+  const response = await fetch("/api/generate-content", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      topic,
+      platform,
+      tone,
+    }),
+  });
 
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Erreur de génération");
+  }
+
+  setGeneratedContent(data.content);
+}
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as GenerateContentBody;
